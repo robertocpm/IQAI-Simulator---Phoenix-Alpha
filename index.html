@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulador IQAI Phoenix Alpha</title>
+  <!-- Biblioteca para exportar PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <!-- Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'pt',
+        includedLanguages: 'pt,pt-PT,en,fr,it,ja,zh-CN,ar,nl,ko,cs,af,en,es,ca,el,id,ga,hi,kk,fi,eu,ru,be,bn,iw,bg,de',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 40px;
+      background-image: url('https://static.isq.ai/upload/images/DtTiszqOYnGFfTHnOwZ-P.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #f2f4f8;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .content-wrapper {
+      max-width: 1000px;
+      margin: auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Fundo de imagem transparente */
+    .background-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 700px;
+      background-image: url('https://raw.githubusercontent.com/robertocpm/imagens-publicas/main/Phoenix.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+      z-index: 0;
+      border-radius: 12px 12px 0 0;
+    }
+
+    h1 {
+      color: #1a237e;
+      font-size: 28px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-left: 5px solid #1a237e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      text-align: center;
+      z-index: 2;
+      position: relative;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #1a237e;
+      border-bottom: 3px solid #1a237e;
+      padding-bottom: 8px;
+      margin-top: 30px;
+      font-size: 22px;
+      position: relative;
+      z-index: 2;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 15px 0 5px;
+      color: #333;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Estilo melhorado para o campo de montante */
+    #montante {
+      font-size: 1.1em;
+      font-weight: bold;
+      padding: 14px 16px;
+      width: 280px;
+      border: 2px solid #1a237e;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #e3e6f0 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(26, 35, 126, 0.15);
+      color: #1a237e;
+    }
+
+    #montante:focus {
+      outline: none;
+      border-color: #0d47a1;
+      box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2), 0 2px 10px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+
+    select {
+      font-size: 1em;
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Cores para o campo de membro */
+    #membro.nivel1 { background-color: #607d8b; color: white; font-weight: bold; }
+    #membro.avancado { background-color: #ffc107; color: black; font-weight: bold; }
+    #membro.elite { background-color: #9c27b0; color: white; font-weight: bold; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border: 3px solid #8B0000;
+      position: relative;
+      z-index: 2;
+    }
+
+    th, td {
+      border: 2px solid #8B0000;
+      padding: 12px;
+      text-align: right;
+    }
+
+    th {
+      color: #000;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      text-align: center;
+    }
+
+    /* Texto preto e negrito nas colunas principais */
+    th:nth-child(1), th:nth-child(2), th:nth-child(3),
+    td:nth-child(1), td:nth-child(2), td:nth-child(3) {
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* Cores específicas para os cabeçalhos */
+    th:nth-child(1), th:nth-child(2), th:nth-child(3) {
+      background-color: #6E8B3D;
+    }
+    
+    th.aporte-header {
+      background-color: #32CD32;
+    }
+    
+    th.retirada-header {
+      background-color: #FF4500;
+    }
+    
+    th.total-reinvestido-header {
+      background-color: #48D1CC;
+      color: #000;
+    }
+
+    td:first-child {
+      text-align: center;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .resumo td {
+      text-align: left;
+      color: #000;
+    }
+
+    /* Cores para as colunas */
+    .aporte {
+      background-color: #d4edda !important;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .retirada {
+      background-color: #f8d7da !important;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .total-reinvestido {
+      background-color: #b3e0ff !important;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .editable-input {
+      width: 100%;
+      padding: 8px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      text-align: right;
+      font-size: 0.9em;
+      appearance: none;
+      -moz-appearance: textfield;
+      background-color: #f9f9f9;
+      color: #000;
+    }
+
+    .editable-input:focus {
+      border-color: #1a237e;
+      background-color: #fff;
+      outline: none;
+    }
+
+    .editable-input::-webkit-outer-spin-button,
+    .editable-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .action-button {
+      padding: 12px 20px;
+      background-color: #1a237e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-button:hover {
+      background-color: #0d47a1;
+      transform: translateY(-2px);
+    }
+
+    .right-side {
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .creditos {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      padding: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    #google_translate_element {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 5px;
+      padding: 5px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .cadastro-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #1a237e;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .cadastro-link:hover {
+      background-color: #0d47a1;
+    }
+
+    /* Estilo para a seção de doação */
+    .doacao-section {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #1a237e;
+    }
+
+    .doacao-texto {
+      color: #1a237e;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .carteira-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .carteira-endereco {
+      flex-grow: 1;
+      font-family: monospace;
+      word-break: break-all;
+    }
+
+    .btn-copiar {
+      background-color: #1a237e;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-copiar:hover {
+      background-color: #0d47a1;
+    }
+
+    .versiculo {
+      margin-top: 20px;
+      text-align: center;
+      font-style: italic;
+      color: #555;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+    }
+    
+    /* Estilo para o contador */
+    .contador-container {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    
+    .contador-texto {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 10px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Tradução -->
+  <div id="google_translate_element"></div>
+
+  <!-- Link de Cadastro -->
+  <a href="https://mobile.isq.ai/#/pages/login/reg?invite=9969554" class="cadastro-link" target="_blank">
+    🔗 Cadastre-se na INSIGHTQUANTAI
+  </a>
+
+  <!-- Botão PDF -->
+  <div class="right-side">
+    <button class="action-button" onclick="exportToPDF()">
+      <i class="fas fa-file-pdf"></i> Exportar PDF
+    </button>
+  </div>
+
+  <!-- Fundo de imagem -->
+  <div class="background-overlay"></div>
+
+  <div class="content-wrapper">
+    <h1>Simulador IQAI - Phoenix Alpha</h1>
+
+    <!-- Inputs -->
+    <label>Montante da negociação inicial:</label>
+    <input type="number" id="montante" value="00" step="0.01">
+
+    <!-- Campos fixos ocultos -->
+    <input type="hidden" id="duracao" value="90">
+    <input type="hidden" id="taxaRetorno" value="4.6">
+
+    <label>Nível de Membro:</label>
+    <select id="membro">
+      <option value="50">Nível 1 (Taxa de serviço: 50%)</option>
+      <option value="30">Avançado (Taxa de serviço: 30%)</option>
+      <option value="10" selected>Elite (Taxa de serviço: 10%)</option>
+    </select>
+
+    <!-- Resumo -->
+    <h2>Resumo da Negociação</h2>
+    <table class="resumo">
+      <tr><td><strong>Data da negociação:</strong></td><td id="dataNegociacao">--</td></tr>
+      <tr><td><strong>Montante inicial:</strong></td><td id="montanteResumo">--</td></tr>
+      <tr><td><strong>Duração do ciclo:</strong></td><td>90 dias</td></tr>
+      <tr><td><strong>Taxa de retorno esperada:</strong></td><td>4.6% por ciclo</td></tr>
+      <tr><td><strong>Taxa de serviço:</strong></td><td id="taxaServico">--</td></tr>
+      <tr><td><strong>Ganhos no 1º ciclo:</strong></td><td id="ganhosPrimeiroCiclo">--</td></tr>
+    </table>
+
+    <!-- Projeção -->
+    <h2>Projeção dos ganhos para 7 ciclos</h2>
+    <table id="tabelaProjeção">
+      <thead>
+        <tr>
+          <th>Nº ciclo</th>
+          <th>Data de resgate</th>
+          <th>Ganhos do ciclo</th>
+          <th class="total-reinvestido-header">Ativo/Total Reaplicado</th>
+          <th class="aporte-header">Aporte adicional</th>
+          <th class="retirada-header">Retirada</th>
+        </tr>
+      </thead>
+      <tbody id="resultado"></tbody>
+    </table>
+
+    <!-- Nota -->
+    <p><small><strong>Nota:</strong> Insira valores nos campos "Aporte adicional" e "Retirada" para simular cenários personalizados.</small></p>
+
+    <!-- Seção de Doação (na página web) -->
+    <div class="doacao-section">
+      <p class="doacao-texto">Gostou do simulador? Sentiu-se grato? Quer fazer um agradecimento em forma de USDT?</p>
+      
+      <p><strong>Rede: Tron (TRC20)</strong></p>
+      
+      <div class="carteira-item">
+        <span class="carteira-endereco">Carteira 1: TCGx35gEYJwtHyhkrGisNs6sqNdaKKKgan</span>
+        <button class="btn-copiar" onclick="copiarEndereco('TCGx35gEYJwtHyhkrGisNs6sqNdaKKKgan')">
+          <i class="fas fa-copy"></i> Copiar
+        </button>
+      </div>
+      
+      <div class="carteira-item">
+        <span class="carteira-endereco">Carteira 2: TSjpxWhrUWhZP7QqqiFdAmQijotNeEpDbZ</span>
+        <button class="btn-copiar" onclick="copiarEndereco('TSjpxWhrUWhZP7QqqiFdAmQijotNeEpDbZ')">
+          <i class="fas fa-copy"></i> Copiar
+        </button>
+      </div>
+    </div>
+
+    <!-- Versículo -->
+    <div class="versiculo">
+      <p>❤️🙏 Com grandes coisas fez o Senhor por nós, e por isso estamos alegres. Salmos 126:3 🙏❤️</p>
+    </div>
+
+    <!-- Contador de Visitas - CÓDIGO CORRIGIDO -->
+    <div class="contador-container">
+      <div class="contador-texto">Visitas ao simulador:</div>
+      <!-- hitwebcounter Code START -->
+      <a href="https://www.hitwebcounter.com" target="_blank">
+        <img src="https://hitwebcounter.com/counter/counter.php?page=21435488&style=0010&nbdigits=9&type=page&initCount=0" 
+             title="PDF .DOCx" 
+             alt="PDF .DOCx Conversion" 
+             border="0" />
+      </a>
+      <!-- hitwebcounter Code END -->
+    </div>
+
+    <div class="creditos">
+      © 2025 | Roberto Cesar| Simulador Phoenix Alpha v2.8
+    </div>
+  </div>
+
+  <script>
+    // Elementos do DOM
+    const montanteInput = document.getElementById('montante');
+    const membroInput = document.getElementById('membro');
+    const dataNegociacao = document.getElementById('dataNegociacao');
+    const montanteResumo = document.getElementById('montanteResumo');
+    const taxaServico = document.getElementById('taxaServico');
+    const ganhosPrimeiroCiclo = document.getElementById('ganhosPrimeiroCiclo');
+    const tabelaResultado = document.getElementById('resultado');
+
+    // Variáveis para armazenar os valores editáveis
+    let aportes = Array(7).fill(0);
+    let retiradas = Array(7).fill(0);
+
+    // Função para copiar endereço
+    function copiarEndereco(endereco) {
+      navigator.clipboard.writeText(endereco).then(() => {
+        alert('Endereço copiado: ' + endereco);
+      }).catch(err => {
+        console.error('Erro ao copiar: ', err);
+        // Fallback para navegadores mais antigos
+        const textArea = document.createElement('textarea');
+        textArea.value = endereco;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Endereço copiado: ' + endereco);
+      });
+    }
+
+    // Cores para o campo de membro
+    function atualizarCorMembro() {
+      const value = membroInput.value;
+      membroInput.className = '';
+      if (value === '50') {
+        membroInput.classList.add('nivel1');
+      } else if (value === '30') {
+        membroInput.classList.add('avancado');
+      } else if (value === '10') {
+        membroInput.classList.add('elite');
+      }
+    }
+
+    // Formatação em USD
+    function formatarUSD(valor) {
+      return isNaN(valor) ? '--' : new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(valor);
+    }
+
+    // Cálculo principal
+    function calcular() {
+      const montante = parseFloat(montanteInput.value) || 0;
+      const duracao = 90;
+      const taxaRetorno = 4.6;
+      const taxaServicoPercent = parseFloat(membroInput.value);
+      const taxaServicoDecimal = taxaServicoPercent / 100;
+      const taxaRetornoDecimal = taxaRetorno / 100;
+
+      // Atualiza resumo
+      dataNegociacao.innerText = new Date().toLocaleDateString('pt-BR');
+      montanteResumo.innerText = formatarUSD(montante);
+      taxaServico.innerText = `${taxaServicoPercent}%`;
+
+      // Fórmula: ((Montante * TaxaRetorno) * Duração) * (1 - TaxaServiço)
+      const ganhoBruto = montante * taxaRetornoDecimal * duracao;
+      const ganhoLiquido = ganhoBruto * (1 - taxaServicoDecimal);
+      ganhosPrimeiroCiclo.innerText = formatarUSD(ganhoLiquido);
+
+      // Projeção para 7 ciclos
+      tabelaResultado.innerHTML = '';
+      let montanteAtual = montante;
+      const hoje = new Date();
+
+      for (let i = 0; i < 7; i++) {
+        const dataResgate = new Date(hoje);
+        dataResgate.setDate(hoje.getDate() + (i + 1) * duracao);
+        const dataTexto = dataResgate.toLocaleDateString('pt-BR');
+
+        // Cálculo do ganho do ciclo
+        const ganhoBrutoCiclo = montanteAtual * taxaRetornoDecimal * duracao;
+        const ganhoLiquidoCiclo = ganhoBrutoCiclo * (1 - taxaServicoDecimal);
+        
+        const aporte = aportes[i] || 0;
+        const retirada = retiradas[i] || 0;
+        const totalReinvestido = montanteAtual + ganhoLiquidoCiclo + aporte - retirada;
+
+        // Inputs editáveis
+        const inputAporte = `<input type="number" class="editable-input aporte" value="${aporte}" step="0.01" data-index="${i}" data-type="aporte" oninput="atualizarValor(this)">`;
+        const inputRetirada = `<input type="number" class="editable-input retirada" value="${retirada}" step="0.01" data-index="${i}" data-type="retirada" oninput="atualizarValor(this)">`;
+
+        tabelaResultado.innerHTML += `
+          <tr>
+            <td>${i + 1}º</td>
+            <td>${dataTexto}</td>
+            <td>${formatarUSD(ganhoLiquidoCiclo)}</td>
+            <td class="total-reinvestido">${formatarUSD(totalReinvestido)}</td>
+            <td class="aporte">${inputAporte}</td>
+            <td class="retirada">${inputRetirada}</td>
+          </tr>
+        `;
+
+        montanteAtual = totalReinvestido;
+      }
+
+      atualizarCorMembro();
+    }
+
+    // Função para atualizar valores editáveis
+    let timeout;
+    function atualizarValor(input) {
+      const index = parseInt(input.getAttribute('data-index'));
+      const tipo = input.getAttribute('data-type');
+      const valor = parseFloat(input.value) || 0;
+      
+      if (tipo === 'aporte') {
+        aportes[index] = valor;
+      } else if (tipo === 'retirada') {
+        retiradas[index] = valor;
+      }
+      
+      clearTimeout(timeout);
+      timeout = setTimeout(calcular, 300);
+    }
+
+    // Exportar para PDF
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const date = new Date().toLocaleDateString();
+
+      // Título
+      doc.setFontSize(18);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Simulador IQAI - Phoenix Alpha', 14, 15);
+
+      // Resumo
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Resumo da Negociação', 14, 30);
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      const resumo = [
+        ['Data da negociação:', dataNegociacao.innerText],
+        ['Montante inicial:', montanteResumo.innerText],
+        ['Duração do ciclo:', '90 dias'],
+        ['Taxa de retorno esperada:', '4.6% por ciclo'],
+        ['Taxa de serviço:', taxaServico.innerText],
+        ['Ganhos no 1º ciclo:', ganhosPrimeiroCiclo.innerText]
+      ];
+      doc.autoTable({
+        body: resumo,
+        startY: 35,
+        theme: 'plain',
+        styles: { fontSize: 10, fontWeight: 'bold', textColor: 0 },
+        columnStyles: { 0: { fontStyle: 'bold' } }
+      });
+
+      // Projeção
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Projeção dos ganhos para 7 ciclos', 14, doc.lastAutoTable.finalY + 10);
+
+      const headers = [['Nº ciclo', 'Data', 'Ganhos', 'Ativo/Total Reaplicado', 'Aporte adicional', 'Retirada']];
+      const data = Array.from(tabelaResultado.querySelectorAll('tr')).map(tr => {
+        const tds = tr.querySelectorAll('td');
+        const aporteInput = tds[4].querySelector('input');
+        const retiradaInput = tds[5].querySelector('input');
+        
+        return [
+          tds[0].innerText,
+          tds[1].innerText,
+          tds[2].innerText,
+          tds[3].innerText,
+          aporteInput ? formatarUSD(parseFloat(aporteInput.value) || 0) : '--',
+          retiradaInput ? formatarUSD(parseFloat(retiradaInput.value) || 0) : '--'
+        ];
+      });
+
+      doc.autoTable({
+        head: headers,
+        body: data,
+        startY: doc.lastAutoTable.finalY + 15,
+        styles: { 
+          fontSize: 9, 
+          fontWeight: 'bold',
+          textColor: 0,
+          cellPadding: 5,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.2
+        },
+        headStyles: { 
+          fillColor: [110, 139, 61],
+          textColor: 0,
+          fontWeight: 'bold',
+          lineColor: [0, 0, 0],
+          lineWidth: 0.3
+        },
+        bodyStyles: {
+          fillColor: false,
+          textColor: 0,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.2
+        },
+        columnStyles: {
+          0: { cellWidth: 'auto', lineColor: [0, 0, 0] },
+          1: { cellWidth: 'auto', lineColor: [0, 0, 0] },
+          2: { cellWidth: 'auto', lineColor: [0, 0, 0] },
+          3: { cellWidth: 'auto', lineColor: [0, 0, 0] },
+          4: { cellWidth: 'auto', lineColor: [0, 0, 0] },
+          5: { cellWidth: 'auto', lineColor: [0, 0, 0] }
+        },
+        tableWidth: 'auto',
+        showHead: 'firstPage',
+        margin: { left: 14, right: 14 }
+      });
+
+      // Salvar
+      doc.save(`IQAI_PhoenixAlpha_${date.replace(/\//g, '-')}.pdf`);
+    }
+
+    // Event Listeners
+    montanteInput.addEventListener('input', calcular);
+    membroInput.addEventListener('change', calcular);
+
+    // Inicialização
+    window.onload = function () {
+      calcular();
+      atualizarCorMembro();
+    };
+  </script>
+
+</body>
+</html>
+
