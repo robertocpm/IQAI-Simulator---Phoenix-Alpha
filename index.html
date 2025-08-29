@@ -59,7 +59,7 @@
     h1 {
       color: #1a237e;
       font-size: 28px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: #FFA07A; /* Cor salmão como solicitado */
       border-left: 5px solid #1a237e;
       padding: 15px;
       margin: 20px 0;
@@ -89,12 +89,12 @@
       z-index: 2;
     }
 
-    /* Estilo melhorado para o campo de montante */
+    /* Estilo melhorado para o campo de montante - reduzido pela metade */
     #montante {
       font-size: 1.1em;
       font-weight: bold;
       padding: 14px 16px;
-      width: 280px;
+      width: 140px; /* Reduzido pela metade (era 280px) */
       border: 2px solid #1a237e;
       border-radius: 8px;
       background: linear-gradient(135deg, #f8f9ff 0%, #e3e6f0 100%);
@@ -127,6 +127,40 @@
     #membro.avancado { background-color: #ffc107; color: black; font-weight: bold; }
     #membro.elite { background-color: #9c27b0; color: white; font-weight: bold; }
 
+    /* Tabela Resumo com as configurações EXATAS solicitadas */
+    .resumo {
+      width: 500px; /* Largura reduzida pela metade */
+      margin: 20px auto; /* Centralizada */
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border: 3px solid #8B0000;
+      font-size: 1em;
+    }
+
+    .resumo td {
+      border: 2px solid #8B0000;
+      padding: 10px 12px;
+    }
+
+    .resumo td:nth-child(1) {
+      width: 40%;
+      text-align: left;
+      font-weight: bold;
+      background-color: #E3F2FD; /* Azul claro */
+      border-radius: 6px 0 0 6px;
+      padding-left: 14px;
+    }
+
+    .resumo td:nth-child(2) {
+      width: 60%;
+      text-align: left; /* Alinhado à esquerda conforme solicitado */
+      font-weight: bold;
+      background-color: #FFF0F5; /* Salmão claro */
+      padding-left: 14px;
+    }
+
+    /* Estilo para a tabela de projeção */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -189,12 +223,6 @@
       background-color: #f1f1f1;
     }
 
-    .resumo td {
-      text-align: left;
-      color: #000;
-    }
-
-    /* Cores para as colunas */
     .aporte {
       background-color: #d4edda !important;
       color: #000;
@@ -261,10 +289,14 @@
       top: 120px;
       right: 20px;
       z-index: 1000;
+      background-color: #e6f2ff; /* Fundo diferente para a coluna direita */
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .creditos {
-      margin-top: 40px;
+      margin-top: 20px;
       text-align: center;
       font-size: 0.9em;
       color: #666;
@@ -372,6 +404,25 @@
       color: #666;
       margin-bottom: 10px;
     }
+
+    /* Estilo para o link de projeção de ganhos */
+    .projecao-link {
+      display: block;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+      color: #1a237e;
+      text-decoration: none;
+      padding: 10px;
+      background-color: #f0f8ff;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .projecao-link:hover {
+      background-color: #d1e7ff;
+      text-decoration: underline;
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -416,12 +467,14 @@
     <!-- Resumo -->
     <h2>Resumo da Negociação</h2>
     <table class="resumo">
-      <tr><td><strong>Data da negociação:</strong></td><td id="dataNegociacao">--</td></tr>
-      <tr><td><strong>Montante inicial:</strong></td><td id="montanteResumo">--</td></tr>
-      <tr><td><strong>Duração do ciclo:</strong></td><td>90 dias</td></tr>
-      <tr><td><strong>Taxa de retorno esperada:</strong></td><td>4.6% por ciclo</td></tr>
-      <tr><td><strong>Taxa de serviço:</strong></td><td id="taxaServico">--</td></tr>
-      <tr><td><strong>Ganhos no 1º ciclo:</strong></td><td id="ganhosPrimeiroCiclo">--</td></tr>
+      <tr><td>Data da negociação:</td><td id="dataNegociacao">--</td></tr>
+      <tr><td>Montante inicial:</td><td id="montanteResumo">--</td></tr>
+      <tr><td>Duração do ciclo:</td><td>90 dias</td></tr>
+      <tr><td>Taxa de retorno esperada:</td><td>4.6% ao dia </td></tr>
+      <tr><td>Taxa de serviço:</td><td id="taxaServico">--</td></tr>
+      <tr><td>Ganhos no 1º ciclo:</td><td id="ganhosPrimeiroCiclo">--</td></tr>
+      <tr><td>Ganho mensal estimado:</td><td id="ganhoMensal">--</td></tr>
+      <tr><td>Ganho diário estimado:</td><td id="ganhoDiario">--</td></tr>
     </table>
 
     <!-- Projeção -->
@@ -431,7 +484,7 @@
         <tr>
           <th>Nº ciclo</th>
           <th>Data de resgate</th>
-          <th>Ganhos do ciclo</th>
+          <th>Ganhos por ciclo</th>
           <th class="total-reinvestido-header">Ativo/Total Reaplicado</th>
           <th class="aporte-header">Aporte adicional</th>
           <th class="retirada-header">Retirada</th>
@@ -482,8 +535,13 @@
       <!-- hitwebcounter Code END -->
     </div>
 
+    <!-- Link para projeção de ganhos (movido para cá conforme solicitado) -->
+    <a href="https://robertocpm.github.io/Simulador-de-Ganhos-InsightquantAI-IQAI/" class="projecao-link" target="_blank">
+      📈 Calcule também sua projeção de ganhos mensais com o Simulador de projeção de ganhos - IQAI
+    </a>
+
     <div class="creditos">
-      © 2025 | Roberto Cesar| Simulador Phoenix Alpha v2.8
+      © 2025 | Roberto Cesar| Simulador Phoenix Alpha v3.8
     </div>
   </div>
 
@@ -495,6 +553,8 @@
     const montanteResumo = document.getElementById('montanteResumo');
     const taxaServico = document.getElementById('taxaServico');
     const ganhosPrimeiroCiclo = document.getElementById('ganhosPrimeiroCiclo');
+    const ganhoMensal = document.getElementById('ganhoMensal');
+    const ganhoDiario = document.getElementById('ganhoDiario');
     const tabelaResultado = document.getElementById('resultado');
 
     // Variáveis para armazenar os valores editáveis
@@ -557,6 +617,13 @@
       const ganhoBruto = montante * taxaRetornoDecimal * duracao;
       const ganhoLiquido = ganhoBruto * (1 - taxaServicoDecimal);
       ganhosPrimeiroCiclo.innerText = formatarUSD(ganhoLiquido);
+      
+      // Calcular ganho mensal e diário
+      const ganhoMensalValor = ganhoLiquido / 3; // 90 dias = 3 meses
+      const ganhoDiarioValor = ganhoLiquido / 90; // 90 dias
+      
+      ganhoMensal.innerText = formatarUSD(ganhoMensalValor);
+      ganhoDiario.innerText = formatarUSD(ganhoDiarioValor);
 
       // Projeção para 7 ciclos
       tabelaResultado.innerHTML = '';
@@ -640,7 +707,9 @@
         ['Duração do ciclo:', '90 dias'],
         ['Taxa de retorno esperada:', '4.6% por ciclo'],
         ['Taxa de serviço:', taxaServico.innerText],
-        ['Ganhos no 1º ciclo:', ganhosPrimeiroCiclo.innerText]
+        ['Ganhos no 1º ciclo:', ganhosPrimeiroCiclo.innerText],
+        ['Ganho mensal estimado:', ganhoMensal.innerText],
+        ['Ganho diário estimado:', ganhoDiario.innerText]
       ];
       doc.autoTable({
         body: resumo,
